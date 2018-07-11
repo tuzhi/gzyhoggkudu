@@ -1,0 +1,199 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>gzyh-ggjava-impala</groupId>
+	<artifactId>gzyh-ggjava-impala</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+
+	<properties>
+		<slf4j.version>1.7.6</slf4j.version>
+		<goldengate.version>12.2.0.1.2.001</goldengate.version>
+		<default.java.home>${JAVA_HOME}</default.java.home>
+	</properties>
+
+	<name>Goldengate Impala User Exit</name>
+	<description>Goldengate Impala User Exit</description>
+	<inceptionYear>2015</inceptionYear>
+
+	<dependencies>
+		<!-- goldengate lib -->
+		<dependency>
+			<groupId>oracle.goldengate</groupId>
+			<artifactId>ggdbutil</artifactId>
+			<version>${goldengate.version}</version>
+			<systemPath>${project.basedir}/lib/ggdbutil-${goldengate.version}.jar</systemPath>
+			<scope>system</scope>
+		</dependency>
+		<dependency>
+			<groupId>oracle.goldengate</groupId>
+			<artifactId>gguserexitapi</artifactId>
+			<version>${goldengate.version}</version>
+			<systemPath>${project.basedir}/lib/gguserexitapi-${goldengate.version}.jar</systemPath>
+			<scope>system</scope>
+		</dependency>
+		<dependency>
+			<groupId>oracle.goldengate</groupId>
+			<artifactId>ggutil</artifactId>
+			<version>${goldengate.version}</version>
+			<systemPath>${project.basedir}/lib/ggutil-${goldengate.version}.jar</systemPath>
+			<scope>system</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>17.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.dropwizard.metrics</groupId>
+			<artifactId>metrics-core</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.typesafe</groupId>
+			<artifactId>config</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+
+		<!-- impala lib -->
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>hive_metastore</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>hive_service</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>ImpalaJDBC41</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>libfb303</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>libthrift</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>ql</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.5.11</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.5.11</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>TCLIServiceClient</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>gzyh</groupId>
+			<artifactId>zookeeper</artifactId>
+			<version>3.4.6</version>
+		</dependency>
+
+		<!-- KUDU -->
+		<dependency>
+			<groupId>org.apache.kudu</groupId>
+			<artifactId>kudu-client</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<finalName>goldengate-kudu-adapter</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<configuration>
+						<compilerArgs>
+							<arg>-extdirs</arg>
+							<arg>${basedir}/lib</arg>
+						</compilerArgs>
+					</configuration>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.1</version>
+				<configuration>
+					<workingDirectory>${project.build.testOutputDirectory}</workingDirectory>
+					<jvm>${default.java.home}/bin/java</jvm>
+					<forkMode>always</forkMode>
+					<childDelegation>false</childDelegation>
+					<reportFormat>plain</reportFormat>
+					<trimStackTrace>false</trimStackTrace>
+					<includes>
+						<include>**/*UT.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/assembly/ogg.xml</descriptor>
+					</descriptors>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>
