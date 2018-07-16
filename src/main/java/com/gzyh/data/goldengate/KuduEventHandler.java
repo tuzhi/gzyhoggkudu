@@ -24,10 +24,15 @@ import org.apache.kudu.client.Update;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gzyh.data.type.DBType2DataType;
+import com.gzyh.data.type.MysqlType2DataType;
+import com.gzyh.data.type.OracleType2DataType;
+
 public class KuduEventHandler extends BaseEventHandler implements IGzyhOggProcess{
 	private static final Logger log = LoggerFactory.getLogger(KuduEventHandler.class);
 	private KuduClient client = null;
 	private KuduSession session = null;
+	private DBType2DataType typeMapHandler = null;
 	//外部IMPALA参数
 	private String kudu_master;
 	private String flush_mode;
@@ -53,10 +58,15 @@ public class KuduEventHandler extends BaseEventHandler implements IGzyhOggProces
 			log.info("kudu_master:" + kudu_master + ",flush_mode:" + flush_mode+",manual_flush_batch:" + manual_flush_batch +",schemaName:" + schemaName);
 			client = new KuduClient.KuduClientBuilder(kudu_master).build();
 			session = client.newSession();
+			if(from_oracle){
+				typeMapHandler = new OracleType2DataType();				
+			}else{
+				typeMapHandler = new MysqlType2DataType();
+			}
 		}
 	}
 
-	private void setObject(PartialRow row,Col column ,boolean isAfter) throws ParseException{
+	private void setObject(PartialRow row,Col column ,boolean isAfter) throws Exception{
 		int columnIndex = column.getIndex();
 		if(isDebugEnabled){
 			log.info("setObject:" + columnIndex+ ",value:"+column+",type:"+column.getDataType() + "|" + column.getDataType().getJDBCType() + "|"
@@ -69,8 +79,24 @@ public class KuduEventHandler extends BaseEventHandler implements IGzyhOggProces
 			row.setNull(columnIndex);
 		}else{
 			String strvalue = isAfter?column.getAfterValue():column.getBeforeValue();
-			switch(column.getDataType().getJDBCType()){
-			case Types.CHAR:
+			int native_type = column.getMeta().getNativeDataType();
+			int targetJDBCType = typeMapHandler.getDataType(native_type);
+			switch(targetJDBCType){
+			case Types.TINYINT:
+				row.addByte(columnIndex, Byte.valueOf(strvalue));
+				break;
+			case Types.INTEGER:
+				row.addInt(columnIndex, Integer.valueOf(strvalue));
+				break;
+			case Types.BIGINT:
+				row.addLong(columnIndex, Long.valueOf(strvalue));
+				break;
+			case Types.FLOAT:
+				row.addFloat(columnIndex, Float.valueOf(strvalue));
+				break;
+			case Types.DOUBLE:
+				row.addDouble(columnIndex, Double.valueOf(strvalue));
+				break;
 			case Types.VARCHAR:
 				row.addString(columnIndex, strvalue);
 				break;
@@ -96,42 +122,12 @@ public class KuduEventHandler extends BaseEventHandler implements IGzyhOggProces
 //					break;
 //				default:
 //					break;
-					//				}
+//				}
 					row.addString(columnIndex, strvalue);
 					break;
-				case Types.NUMERIC:
-				case Types.DOUBLE:
-					int native_type = column.getMeta().getNativeDataType();
-					if(from_oracle){
-						switch(native_type){
-						case 100:
-							row.addFloat(columnIndex, Float.valueOf(strvalue));
-							break;
-						default:
-							row.addDouble(columnIndex,Double.valueOf(strvalue));
-							break;
-						}
-					}else{
-						switch(native_type){
-						case 1:
-							row.addByte(columnIndex, Byte.valueOf(strvalue));
-							break;
-						case 2:
-						case 3:
-							row.addInt(columnIndex, Integer.valueOf(strvalue));
-							break;
-						case 8:
-							row.addLong(columnIndex, Long.valueOf(strvalue));
-							break;
-						default:
-							row.addDouble(columnIndex,Double.valueOf(strvalue));
-							break;
-						}
-					}
-					break;
 				default:
-					log.error("JDBCType not support:" + column.getDataType().getJDBCType());
-					break;
+					log.error("JDBCType not support:" + column.getDataType().getJDBCType()+",native type:" + column.getMeta().getNativeDataType());
+					throw new Exception("JDBCType not support:" + column.getDataType().getJDBCType()+",native type:" + column.getMeta().getNativeDataType());
 				}
 			}
 		}

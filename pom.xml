@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>gzyh-ggjava-impala</groupId>
-	<artifactId>gzyh-ggjava-impala</artifactId>
+	<groupId>gzyh-goldengate</groupId>
+	<artifactId>kudu-adapter</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 
@@ -12,8 +12,8 @@
 		<default.java.home>${JAVA_HOME}</default.java.home>
 	</properties>
 
-	<name>Goldengate Impala User Exit</name>
-	<description>Goldengate Impala User Exit</description>
+	<name>Goldengate kudu User Exit</name>
+	<description>Goldengate kudu User Exit</description>
 	<inceptionYear>2015</inceptionYear>
 
 	<dependencies>
@@ -150,7 +150,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>goldengate-kudu-adapter</finalName>
+		<finalName>gzyh-goldengate-kudu-adapter</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
